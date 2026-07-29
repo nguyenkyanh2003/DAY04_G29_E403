@@ -182,3 +182,74 @@ Hypothesis đề xuất cho v2:
 > Nếu mô tả routing quy định rõ yêu cầu “web/news” phải dùng `lookup`, yêu cầu mạng xã hội mới dùng `social_search`, và lượt mới nhất luôn được ưu tiên khi người dùng đổi nguồn tìm kiếm, thì lỗi multi-turn `M06_switch_tool` sẽ được khắc phục.
 
 Ngoài ra, cần quy định cụ thể rằng trước hành động `send`, agent phải dùng `clarify` với `response_type="yes_no"` để xin xác nhận; không dùng `response_type="text"` cho bước xác nhận.
+
+## v2 — Cải thiện tool declarations
+
+### Thông tin run
+
+- Run file: `runs/v2_B_base_openrouter_20260729T160947892470.json`
+- Artifact version: `v2+p5ae268b8b686+t795a052d0cf6`
+- Tổng số case: 20
+- Số case được đo: 20
+- Provider error: 0
+- Số case PASS: 18
+- Số case FAIL: 2
+
+Run hợp lệ vì toàn bộ 20 case đều được đo và không có lỗi provider. So với v1, `prompt_hash` giữ nguyên và `tools_hash` thay đổi, cho thấy thay đổi của v2 nằm ở `artifacts/tools.yaml`.
+
+### Metrics và so sánh v1 → v2
+
+| Metric | v1 | v2 | Thay đổi |
+|---|---:|---:|---:|
+| Case accuracy | 0.90 | 0.90 | 0.00 |
+| Tool routing accuracy | 0.95 | 0.95 | 0.00 |
+| Argument accuracy | 0.90 | 0.90 | 0.00 |
+| Multiturn accuracy | 0.8333 | 0.8333 | 0.00 |
+| Số case PASS | 18/20 | 18/20 | 0 case |
+
+V2 không cải thiện metric tổng thể so với v1. Tuy nhiên, hai lỗi của v1 (`R12_confirm_before_send` và `M06_switch_tool`) đã PASS, trong khi hai regression mới xuất hiện ở `R01_user_tweets_routing` và `M03_correction_handle`. Vì vậy, tác động của thay đổi declaration là trung tính về số điểm nhưng đã thay đổi dạng lỗi.
+
+### Failure counts
+
+| Failure type | Số case |
+|---|---:|
+| `wrong_tool` | 1 |
+| `wrong_arg_value` | 1 |
+
+### Observed mismatches
+
+| Mismatch thực tế | Số case |
+|---|---:|
+| `missing_tool_call` | 1 |
+| `wrong_arg_value` | 1 |
+
+## Phân tích 2 case thất bại của v2
+
+### R01_user_tweets_routing
+
+- Failure type: `wrong_tool`
+- Mismatch: `missing_tool_call`
+- Tool kỳ vọng: `timeline(screenname="sama")`.
+- Tool thực tế: `clarify(response_type="text")`.
+- Agent hỏi người dùng có muốn chỉ định số lượng tweet hay không, dù `limit` là tham số có giá trị mặc định và request đã có handle cần thiết.
+- Nhận xét: agent đang hỏi thừa đối với optional argument. Declaration hoặc prompt cần nói rõ chỉ hỏi lại khi thiếu argument bắt buộc; không hỏi lại cho `limit` vì tool có default.
+
+### M03_correction_handle
+
+- Failure type: `wrong_arg_value`
+- Mismatch: `wrong_arg_value`
+- Tool kỳ vọng: `timeline(screenname="karpathy", limit=3)`.
+- Tool thực tế: `timeline(screenname="andrejkarpathy", limit=3)`.
+- Agent tự chuẩn hóa hoặc mở rộng handle được người dùng cung cấp, làm sai giá trị kỳ vọng.
+- Nhận xét: khi người dùng đã cung cấp handle cụ thể hoặc sửa handle ở lượt mới nhất, agent phải giữ nguyên giá trị đó, không tự đổi sang một tên tài khoản khác.
+- Lỗi thực thi cần review thủ công: tool `timeline` trả `JSONDecodeError: Expecting value: line 1 column 1 (char 0)`. Đây không phải `provider_error` và không được phản ánh đầy đủ trong routing metric, nhưng cho thấy tool thực tế chưa trả dữ liệu hợp lệ ở case này.
+
+## Kết luận và đề xuất cho v3
+
+V2 giữ nguyên case accuracy 90%. Việc làm rõ tool declarations đã sửa được hai lỗi còn lại của v1, nhưng đồng thời tạo hai lỗi mới. Điều này cho thấy cần kiểm soát rõ hơn ranh giới giữa thông tin bắt buộc và tham số tùy chọn, cũng như quy tắc bảo toàn giá trị người dùng cung cấp.
+
+Hypothesis đề xuất cho v3:
+
+> Nếu quy định `limit` là optional và dùng giá trị mặc định khi người dùng không nêu số lượng, đồng thời yêu cầu giữ nguyên handle từ lượt người dùng mới nhất thay vì tự chuẩn hóa, thì `R01_user_tweets_routing` và `M03_correction_handle` sẽ PASS mà không làm mất các cải thiện của v2.
+
+Trước khi báo tool hoạt động hoàn chỉnh, cần smoke-test riêng `timeline` để xác định nguyên nhân `JSONDecodeError`; routing PASS không đồng nghĩa tool đã thực thi thành công.
