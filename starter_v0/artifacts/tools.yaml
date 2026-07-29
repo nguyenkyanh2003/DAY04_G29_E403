@@ -9,55 +9,76 @@
 tools:
   # ---------------- Core tools ----------------
   - name: clarify
-    description: "Gửi một câu hỏi cho người dùng."
+    description: >-
+      Hỏi lại người dùng khi KHÔNG thể hành động an toàn. Hai tình huống dùng, phân biệt bằng response_type:
+      (1) thiếu thông tin bắt buộc (không biết tài khoản nào, URL nào, từ khóa gì) -> response_type="text";
+      (2) người dùng yêu cầu một hành động gửi/đăng ra ngoài và cần xác nhận trước khi thực hiện -> response_type="yes_no".
+      Nếu request vừa thiếu thông tin vừa là hành động gửi ra ngoài, ƯU TIÊN xác nhận hành động trước: dùng "yes_no".
+      KHÔNG dùng tool này để trả lời hay tóm tắt nội dung cho người dùng.
     parameters:
       type: object
       properties:
-        question: {type: string, default: "", description: "Câu hỏi"}
-        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Kiểu trả lời"}
-        options: {type: array, default: [], items: {type: string}, description: "Các lựa chọn"}
+        question: {type: string, default: "", description: "Câu hỏi gửi cho người dùng"}
+        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "text = hỏi bổ sung thông tin còn thiếu; yes_no = xin xác nhận trước một hành động gửi/đăng ra ngoài; choice = cho chọn trong options"}
+        options: {type: array, default: [], items: {type: string}, description: "Các lựa chọn, chỉ dùng khi response_type=choice"}
       required: [question]
 
   - name: timeline
-    description: "Lấy các bài đăng gần đây."
+    description: >-
+      Lấy các bài đăng gần đây CỦA MỘT TÀI KHOẢN cụ thể trên mạng xã hội, khi đã biết tên tài khoản (handle).
+      DÙNG khi người dùng hỏi "tài khoản X đăng gì", "tweet mới nhất của X".
+      KHÔNG dùng khi chưa biết X là ai — khi đó gọi clarify. KHÔNG dùng để tìm theo từ khóa — đó là social_search.
     parameters:
       type: object
       properties:
-        screenname: {type: string, default: "", description: "Tên tài khoản"}
-        limit: {type: integer, default: 5, description: "Số lượng"}
+        screenname: {type: string, default: "", description: "Handle của tài khoản, không kèm @. Không được tự suy đoán nếu người dùng chưa nêu"}
+        limit: {type: integer, default: 5, description: "Số bài lấy về. Nếu người dùng nêu số cụ thể thì dùng đúng số đó"}
       required: [screenname]
 
   - name: social_search
-    description: "Tìm trên mạng xã hội."
+    description: >-
+      Tìm bài đăng trên MẠNG XÃ HỘI (Twitter/X) theo từ khóa — dùng khi người dùng muốn biết dư luận,
+      cộng đồng đang nói gì, phản ứng trên mạng xã hội.
+      KHÔNG dùng cho tin tức báo chí trên web — đó là lookup với topic="news".
+      Nếu người dùng nói rõ muốn chuyển từ mạng xã hội sang web/báo chí, hãy đổi sang lookup.
     parameters:
       type: object
       properties:
-        query: {type: string, default: "", description: "Từ khóa"}
-        search_type: {type: string, enum: [Latest, Top], default: "Latest", description: "Cách sắp xếp"}
-        limit: {type: integer, default: 5, description: "Số lượng"}
+        query: {type: string, default: "", description: "Từ khóa tìm kiếm, giữ ngắn gọn đúng chủ đề"}
+        search_type: {type: string, enum: [Latest, Top], default: "Latest", description: "Latest = mới nhất theo thời gian; Top = phổ biến/nhiều tương tác nhất. Người dùng hỏi 'nổi bật', 'được quan tâm nhất' thì dùng Top"}
+        limit: {type: integer, default: 5, description: "Số bài lấy về"}
       required: [query]
 
   - name: lookup
-    description: "Tra cứu thông tin trên internet."
+    description: >-
+      Tìm thông tin trên WEB (trang tin, báo chí, tài liệu công khai).
+      DÙNG khi người dùng hỏi tin tức, sự kiện, thông tin chung, hoặc nói rõ muốn tìm trên web/báo thay vì mạng xã hội.
+      KHÔNG dùng để lấy dư luận mạng xã hội — đó là social_search.
     parameters:
       type: object
       properties:
-        query: {type: string, default: "", description: "Truy vấn"}
-        topic: {type: string, enum: [general, news], default: "general", description: "Phân loại"}
-        timeframe: {type: string, enum: [day, week, month, year], default: "week", description: "Khoảng thời gian"}
+        query: {type: string, default: "", description: "CHỈ chứa chủ đề cần tìm, viết ngắn gọn. Không nhồi các từ như 'tin tức', 'mới nhất', 'hôm nay' vào đây — hãy diễn đạt chúng bằng topic và timeframe"}
+        topic: {type: string, enum: [general, news], default: "general", description: "Đặt 'news' khi người dùng hỏi tin tức/thời sự/cập nhật mới; 'general' cho thông tin nền hoặc tra cứu chung"}
+        timeframe: {type: string, enum: [day, week, month, year], default: "week", description: "Người dùng nói 'hôm nay'/'24h' -> day; 'tuần này' -> week; 'tháng này' -> month"}
         max_results: {type: integer, default: 5, description: "Số kết quả"}
       required: [query]
 
   - name: fetch
-    description: "Lấy nội dung từ một địa chỉ."
+    description: >-
+      Đọc nội dung của MỘT URL cụ thể mà người dùng đã cung cấp.
+      KHÔNG bao giờ tự đoán hay bịa URL. Nếu người dùng nói "bài viết này", "link kia" mà chưa đưa địa chỉ,
+      thông tin đang thiếu — gọi clarify thay vì đoán.
     parameters:
       type: object
       properties:
-        url: {type: string, default: "", description: "Địa chỉ"}
+        url: {type: string, default: "", description: "URL đầy đủ do người dùng cung cấp"}
       required: [url]
 
   - name: format
-    description: "Trình bày dữ liệu đã có thành văn bản."
+    description: >-
+      Trình bày các item ĐÃ THU THẬP ĐƯỢC thành markdown digest cho người dùng đọc.
+      Chỉ gọi sau khi đã có dữ liệu thật từ các tool tìm kiếm. Đây là cách trình bày kết quả,
+      không phải cách gửi ra kênh ngoài (đó là send).
     parameters:
       type: object
       properties:
@@ -77,14 +98,102 @@ tools:
         headline: {type: string, default: "", description: "Tiêu đề"}
       required: [items, template]
 
-  # ---------------- Bonus tools ----------------
-  - name: send
-    description: "Gửi một đoạn văn bản đi."
+  # ---------------- Tool mới do nhóm viết ----------------
+  - name: save_note
+    description: >-
+      Lưu một ghi chú nghiên cứu vào file cục bộ để dùng lại về sau.
+      DÙNG khi người dùng yêu cầu rõ ràng "lưu lại", "ghi chú lại", "lưu nháp" một nội dung.
+      KHÔNG dùng để trả lời hay tóm tắt cho người dùng đọc — việc đó dùng format.
+      Gộp thông tin thành một note cho mỗi chủ đề, không gọi lắt nhắt nhiều lần.
     parameters:
       type: object
       properties:
-        text: {type: string, default: "", description: "Nội dung"}
-        confirmed: {type: boolean, default: false, description: "Cờ xác nhận"}
+        topic: {type: string, default: "", description: "Tiêu đề/chủ đề của ghi chú, ngắn gọn"}
+        content: {type: string, default: "", description: "Nội dung chi tiết cần lưu"}
+      required: [topic, content]
+
+  - name: rank_sources
+    description: >-
+      Xếp hạng các nguồn đã thu thập theo mức liên quan tới truy vấn, trả về danh sách đã sắp xếp.
+      DÙNG sau khi đã có kết quả từ lookup/social_search và người dùng cần biết nguồn nào đáng đọc trước.
+      KHÔNG dùng để đi tìm nguồn mới.
+    parameters:
+      type: object
+      properties:
+        items:
+          type: array
+          default: []
+          description: "Danh sách nguồn đã thu thập được từ các tool tìm kiếm"
+          items:
+            type: object
+            properties:
+              title: {type: string}
+              url: {type: string}
+              source: {type: string}
+              summary: {type: string}
+        query: {type: string, default: "", description: "Truy vấn gốc để tính mức liên quan"}
+        limit: {type: integer, default: 5, description: "Số nguồn giữ lại sau khi xếp hạng"}
+      required: [items, query]
+
+  - name: deduplicate_sources
+    description: >-
+      Loại bỏ các nguồn trùng lặp trong danh sách đã thu thập (trùng URL hoặc trùng nội dung tiêu đề).
+      DÙNG khi gộp kết quả từ nhiều tool tìm kiếm và cần làm sạch trước khi trình bày.
+      KHÔNG dùng để xếp hạng — đó là rank_sources.
+    parameters:
+      type: object
+      properties:
+        items:
+          type: array
+          default: []
+          description: "Danh sách nguồn cần khử trùng lặp"
+          items:
+            type: object
+            properties:
+              title: {type: string}
+              url: {type: string}
+              source: {type: string}
+              summary: {type: string}
+      required: [items]
+
+  - name: compare_sources
+    description: >-
+      So sánh hai nguồn cụ thể để chỉ ra điểm chung và điểm khác biệt về nội dung.
+      DÙNG khi người dùng hỏi hai bài/hai nguồn nói giống hay khác nhau chỗ nào.
+      Chỉ so đúng hai nguồn một lần; muốn lọc cả danh sách thì dùng deduplicate_sources hoặc rank_sources.
+    parameters:
+      type: object
+      properties:
+        source_a:
+          type: object
+          description: "Nguồn thứ nhất"
+          properties:
+            title: {type: string}
+            url: {type: string}
+            summary: {type: string}
+        source_b:
+          type: object
+          description: "Nguồn thứ hai"
+          properties:
+            title: {type: string}
+            url: {type: string}
+            summary: {type: string}
+        max_terms: {type: integer, default: 12, description: "Số từ khóa tối đa đưa ra khi so sánh"}
+      required: [source_a, source_b]
+
+  # ---------------- Bonus tools ----------------
+  - name: send
+    description: >-
+      Đăng một đoạn văn bản ra KÊNH NGOÀI (Telegram). Đây là hành động ghi, không thể hoàn tác.
+      BẮT BUỘC gọi clarify với response_type="yes_no" để xin xác nhận TRƯỚC, và chỉ gọi send
+      sau khi người dùng đã đồng ý ở lượt trước đó.
+      ĐÂY KHÔNG PHẢI cách trả lời người dùng. Muốn trả lời thì viết text bình thường,
+      muốn trình bày kết quả thì dùng format. Không bao giờ dùng send cho yêu cầu ngoài phạm vi research.
+    parameters:
+      type: object
+      properties:
+        text: {type: string, default: "", description: "Nội dung sẽ đăng ra kênh ngoài"}
+        confirmed: {type: boolean, default: false, description: "Chỉ đặt true khi người dùng đã xác nhận đồng ý ở lượt trước"}
       required: [text]
 
   - name: policy
