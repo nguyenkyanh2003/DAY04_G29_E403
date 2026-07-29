@@ -1,0 +1,29 @@
+{
+  "transcript_id": "chat_01_normal_research",
+  "artifact_version": "v3",
+  "provider": "openrouter",
+  "model": "google/gemini-2.5-pro",
+  "turns": [
+    {
+      "turn_index": 1,
+      "user": "Tìm tin tức mới nhất về công nghệ AI tuần này",
+      "status": "answered",
+      "assistant_text": "Dựa trên kết quả tìm kiếm, có nhiều tin tức nổi bật về AI trong tuần này bao gồm việc các công ty công nghệ lớn phát hành model mới và các cuộc thảo luận về đạo đức AI.",
+      "tool_events": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "công nghệ AI",
+            "topic": "news"
+          },
+          "result": {
+            "results": [
+              "Hãng X ra mắt model mới nhất",
+              "Thảo luận về an toàn AI"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

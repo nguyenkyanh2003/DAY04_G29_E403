@@ -1,0 +1,44 @@
+{
+  "transcript_id": "chat_03_confirmation",
+  "artifact_version": "v3",
+  "provider": "openrouter",
+  "model": "google/gemini-2.5-pro",
+  "turns": [
+    {
+      "turn_index": 1,
+      "user": "Gửi tin nhắn chào mừng năm mới lên group cho mọi người nhé",
+      "status": "waiting_for_user",
+      "assistant_text": "Hành động này sẽ gửi nội dung ra bên ngoài. Bạn có chắc chắn muốn tôi gửi không? (Yes/No)",
+      "tool_events": [
+        {
+          "tool": "clarify",
+          "args": {
+            "response_type": "yes_no"
+          },
+          "result": {
+            "action": "asked_user",
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "turn_index": 2,
+      "user": "Yes, gửi đi",
+      "status": "answered",
+      "assistant_text": "Tôi đã gửi tin nhắn thành công.",
+      "tool_events": [
+        {
+          "tool": "send",
+          "args": {
+            "content": "Chào mừng năm mới!"
+          },
+          "result": {
+            "status": "success",
+            "message": "Sent successfully"
+          }
+        }
+      ]
+    }
+  ]
+}

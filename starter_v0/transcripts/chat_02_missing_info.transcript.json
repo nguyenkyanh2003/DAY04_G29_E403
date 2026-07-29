@@ -1,0 +1,46 @@
+{
+  "transcript_id": "chat_02_missing_info",
+  "artifact_version": "v3",
+  "provider": "openrouter",
+  "model": "google/gemini-2.5-pro",
+  "turns": [
+    {
+      "turn_index": 1,
+      "user": "Xem các bài đăng gần đây của ông ấy đi",
+      "status": "waiting_for_user",
+      "assistant_text": "Tài khoản (handle) mà bạn muốn xem là gì vậy?",
+      "tool_events": [
+        {
+          "tool": "clarify",
+          "args": {
+            "response_type": "text"
+          },
+          "result": {
+            "action": "asked_user",
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "turn_index": 2,
+      "user": "sama",
+      "status": "answered",
+      "assistant_text": "Đây là các bài đăng gần đây của tài khoản sama mà tôi vừa lấy được.",
+      "tool_events": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "sama"
+          },
+          "result": {
+            "tweets": [
+              "We are shipping soon",
+              "Exciting times"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
