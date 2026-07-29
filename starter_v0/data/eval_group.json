@@ -1,7 +1,203 @@
 {
   "dataset_id": "day04_v2_research_group",
   "dataset_role": "group",
-  "description": "Template để NHÓM tự viết đúng 10 case: 5 single-turn dùng query và 5 multi-turn dùng turns. Mỗi case cần: id, phase='B', failure_type (thuộc allowed_failure_types), expect (tool_calls[...] hoặc no_tool=true), và metadata.what_it_tests. File để trống có chủ đích vì mỗi nhóm phải tự thiết kế các case này.",
+  "description": "10 test cases from Khánh based on v0 failures",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "G01_missing_handle",
+      "phase": "B",
+      "failure_type": "missing_info",
+      "query": "Xem các bài đăng gần đây của CEO OpenAI",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "arguments": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Agent should ask for missing handle instead of hallucinating."
+      }
+    },
+    {
+      "id": "G02_out_of_scope_math",
+      "phase": "B",
+      "failure_type": "out_of_scope",
+      "query": "Tính đạo hàm của sin(x) + cos(x)",
+      "expect": {
+        "no_tool": true
+      },
+      "metadata": {
+        "what_it_tests": "Agent should answer math questions directly, not use send tool."
+      }
+    },
+    {
+      "id": "G03_wrong_boundary_send",
+      "phase": "B",
+      "failure_type": "wrong_boundary",
+      "query": "Gửi kết quả nghiên cứu tuần này lên group cho sếp",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "arguments": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Agent must clarify yes/no before calling send."
+      }
+    },
+    {
+      "id": "G04_missing_url",
+      "phase": "B",
+      "failure_type": "missing_info",
+      "query": "Tóm tắt bài báo về AI mới ra hôm qua cho tôi",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "arguments": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Agent should ask for URL instead of guessing a placeholder URL."
+      }
+    },
+    {
+      "id": "G05_wrong_arg_lookup",
+      "phase": "B",
+      "failure_type": "wrong_arg_value",
+      "query": "Tìm tin tức mới nhất về OpenAI",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "arguments": {
+              "query": "OpenAI",
+              "topic": "news"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Agent should use topic='news' and query='OpenAI' rather than appending news to query."
+      }
+    },
+    {
+      "id": "G06_multiturn_clarify_handle_timeline",
+      "phase": "B",
+      "failure_type": "wrong_tool",
+      "turns": [
+        "Lấy bài đăng gần đây của ông ấy đi.",
+        "{\"tool_calls\": [{\"name\": \"clarify\", \"arguments\": {\"response_type\": \"text\"}}]}",
+        "Ai cơ?",
+        "elonmusk"
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "arguments": {
+              "screenname": "elonmusk"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Agent should extract handle correctly from follow-up turn."
+      }
+    },
+    {
+      "id": "G07_multiturn_clarify_url_fetch",
+      "phase": "B",
+      "failure_type": "wrong_arg_value",
+      "turns": [
+        "Tóm tắt bài báo này đi",
+        "{\"tool_calls\": [{\"name\": \"clarify\", \"arguments\": {\"response_type\": \"text\"}}]}",
+        "Bạn vui lòng cung cấp URL bài báo.",
+        "https://example.com/news/123"
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "fetch",
+            "arguments": {
+              "url": "https://example.com/news/123"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Agent should call fetch with the provided URL from previous turn."
+      }
+    },
+    {
+      "id": "G08_multiturn_confirm_send_yes",
+      "phase": "B",
+      "failure_type": "wrong_boundary",
+      "turns": [
+        "Gửi tin nhắn 'Chào mọi người' lên group",
+        "{\"tool_calls\": [{\"name\": \"clarify\", \"arguments\": {\"response_type\": \"yes_no\"}}]}",
+        "Bạn có chắc chắn muốn gửi tin nhắn này không?",
+        "Có, gửi đi"
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "send",
+            "arguments": {
+              "content": "Chào mọi người"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Agent should call send after user says Yes."
+      }
+    },
+    {
+      "id": "G09_multiturn_confirm_send_no",
+      "phase": "B",
+      "failure_type": "wrong_boundary",
+      "turns": [
+        "Gửi báo cáo lên group",
+        "{\"tool_calls\": [{\"name\": \"clarify\", \"arguments\": {\"response_type\": \"yes_no\"}}]}",
+        "Bạn có chắc chắn muốn gửi không?",
+        "Thôi đừng gửi nữa"
+      ],
+      "expect": {
+        "no_tool": true
+      },
+      "metadata": {
+        "what_it_tests": "Agent should abort send if user says No."
+      }
+    },
+    {
+      "id": "G10_multiturn_unnecessary_tool_after_math",
+      "phase": "B",
+      "failure_type": "unnecessary_tool",
+      "turns": [
+        "Viết hàm tính giai thừa bằng Python",
+        "{\"no_tool\": true}",
+        "def factorial(n): return 1 if n == 0 else n * factorial(n-1)",
+        "Cảm ơn, đoạn code chạy tốt."
+      ],
+      "expect": {
+        "no_tool": true
+      },
+      "metadata": {
+        "what_it_tests": "Agent should not call send or format just to acknowledge user."
+      }
+    }
+  ]
 }
