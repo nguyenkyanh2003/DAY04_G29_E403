@@ -13,7 +13,7 @@
         "tool_calls": [
           {
             "name": "clarify",
-            "arguments": {
+            "args": {
               "response_type": "text"
             }
           }
@@ -44,7 +44,7 @@
         "tool_calls": [
           {
             "name": "clarify",
-            "arguments": {
+            "args": {
               "response_type": "yes_no"
             }
           }
@@ -63,7 +63,7 @@
         "tool_calls": [
           {
             "name": "clarify",
-            "arguments": {
+            "args": {
               "response_type": "text"
             }
           }
@@ -82,7 +82,7 @@
         "tool_calls": [
           {
             "name": "lookup",
-            "arguments": {
+            "args": {
               "query": "OpenAI",
               "topic": "news"
             }
@@ -98,16 +98,14 @@
       "phase": "B",
       "failure_type": "wrong_tool",
       "turns": [
-        "Lấy bài đăng gần đây của ông ấy đi.",
-        "{\"tool_calls\": [{\"name\": \"clarify\", \"arguments\": {\"response_type\": \"text\"}}]}",
-        "Ai cơ?",
-        "elonmusk"
+        {"role": "user", "content": "Lấy bài đăng gần đây của ông ấy đi."},
+        {"role": "user", "content": "Ý mình là tài khoản elonmusk"}
       ],
       "expect": {
         "tool_calls": [
           {
             "name": "timeline",
-            "arguments": {
+            "args": {
               "screenname": "elonmusk"
             }
           }
@@ -122,16 +120,14 @@
       "phase": "B",
       "failure_type": "wrong_arg_value",
       "turns": [
-        "Tóm tắt bài báo này đi",
-        "{\"tool_calls\": [{\"name\": \"clarify\", \"arguments\": {\"response_type\": \"text\"}}]}",
-        "Bạn vui lòng cung cấp URL bài báo.",
-        "https://example.com/news/123"
+        {"role": "user", "content": "Tóm tắt bài báo này đi"},
+        {"role": "user", "content": "Link đây: https://example.com/news/123"}
       ],
       "expect": {
         "tool_calls": [
           {
             "name": "fetch",
-            "arguments": {
+            "args": {
               "url": "https://example.com/news/123"
             }
           }
@@ -146,17 +142,15 @@
       "phase": "B",
       "failure_type": "wrong_boundary",
       "turns": [
-        "Gửi tin nhắn 'Chào mọi người' lên group",
-        "{\"tool_calls\": [{\"name\": \"clarify\", \"arguments\": {\"response_type\": \"yes_no\"}}]}",
-        "Bạn có chắc chắn muốn gửi tin nhắn này không?",
-        "Có, gửi đi"
+        {"role": "user", "content": "Gửi tin nhắn 'Chào mọi người' lên group"},
+        {"role": "user", "content": "Có, mình xác nhận, gửi đi"}
       ],
       "expect": {
         "tool_calls": [
           {
             "name": "send",
-            "arguments": {
-              "content": "Chào mọi người"
+            "args": {
+              "text": "Chào mọi người"
             }
           }
         ]
@@ -170,10 +164,8 @@
       "phase": "B",
       "failure_type": "wrong_boundary",
       "turns": [
-        "Gửi báo cáo lên group",
-        "{\"tool_calls\": [{\"name\": \"clarify\", \"arguments\": {\"response_type\": \"yes_no\"}}]}",
-        "Bạn có chắc chắn muốn gửi không?",
-        "Thôi đừng gửi nữa"
+        {"role": "user", "content": "Gửi báo cáo lên group"},
+        {"role": "user", "content": "Thôi đừng gửi nữa"}
       ],
       "expect": {
         "no_tool": true
@@ -187,10 +179,8 @@
       "phase": "B",
       "failure_type": "unnecessary_tool",
       "turns": [
-        "Viết hàm tính giai thừa bằng Python",
-        "{\"no_tool\": true}",
-        "def factorial(n): return 1 if n == 0 else n * factorial(n-1)",
-        "Cảm ơn, đoạn code chạy tốt."
+        {"role": "user", "content": "Viết hàm tính giai thừa bằng Python"},
+        {"role": "user", "content": "Cảm ơn, đoạn code chạy tốt."}
       ],
       "expect": {
         "no_tool": true

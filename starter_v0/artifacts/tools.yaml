@@ -11,9 +11,12 @@ tools:
   - name: clarify
     description: >-
       Hỏi lại người dùng khi KHÔNG thể hành động an toàn. Hai tình huống dùng, phân biệt bằng response_type:
-      (1) thiếu thông tin bắt buộc (không biết tài khoản nào, URL nào, từ khóa gì) -> response_type="text";
+      (1) thiếu một THAM SỐ BẮT BUỘC của tool (không biết tài khoản nào, URL nào, từ khóa gì) -> response_type="text";
       (2) người dùng yêu cầu một hành động gửi/đăng ra ngoài và cần xác nhận trước khi thực hiện -> response_type="yes_no".
       Nếu request vừa thiếu thông tin vừa là hành động gửi ra ngoài, ƯU TIÊN xác nhận hành động trước: dùng "yes_no".
+      CHỈ hỏi khi thiếu tham số BẮT BUỘC. Các tham số tùy chọn đã có giá trị mặc định (limit, max_results,
+      timeframe, search_type...) thì dùng luôn mặc định, TUYỆT ĐỐI không hỏi lại người dùng về chúng.
+      Đã đủ tham số bắt buộc thì gọi thẳng tool, đừng hỏi thêm cho chắc.
       KHÔNG dùng tool này để trả lời hay tóm tắt nội dung cho người dùng.
     parameters:
       type: object
@@ -21,7 +24,7 @@ tools:
         question: {type: string, default: "", description: "Câu hỏi gửi cho người dùng"}
         response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "text = hỏi bổ sung thông tin còn thiếu; yes_no = xin xác nhận trước một hành động gửi/đăng ra ngoài; choice = cho chọn trong options"}
         options: {type: array, default: [], items: {type: string}, description: "Các lựa chọn, chỉ dùng khi response_type=choice"}
-      required: [question]
+      required: [question, response_type]
 
   - name: timeline
     description: >-
@@ -31,7 +34,7 @@ tools:
     parameters:
       type: object
       properties:
-        screenname: {type: string, default: "", description: "Handle của tài khoản, không kèm @. Không được tự suy đoán nếu người dùng chưa nêu"}
+        screenname: {type: string, default: "", description: "Handle của tài khoản, không kèm @. Dùng ĐÚNG tên người dùng đã nêu, viết thường; không tự chuẩn hóa sang handle đầy đủ hay handle thật (người dùng nói 'Karpathy' -> 'karpathy', KHÔNG đổi thành 'andrejkarpathy'). Không được tự suy đoán nếu người dùng chưa nêu"}
         limit: {type: integer, default: 5, description: "Số bài lấy về. Nếu người dùng nêu số cụ thể thì dùng đúng số đó"}
       required: [screenname]
 

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git pull *)",
+      "Bash(.venv/Scripts/python.exe run_eval.py --provider openrouter --version v1 --suite base --eval-cases data/eval_base.json)",
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -c ' *)",
+      "Bash(.venv/Scripts/python.exe run_eval.py --provider openrouter --version v2 --suite base --eval-cases data/eval_base.json)",
+      "Bash(grep -iE \"\\\\.env$|\\\\.venv\")"
+    ]
+  }
+}
