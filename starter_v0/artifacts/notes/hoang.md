@@ -113,3 +113,72 @@ Hypothesis đề xuất cho v1:
 > Nếu system prompt yêu cầu dùng `clarify` khi thiếu handle/URL, bắt buộc xác nhận yes/no trước `send`, đồng thời nói rõ `send` không phải công cụ trả lời thông thường, thì các lỗi `missing_tool_call`, `unexpected_tool_call` và `wrong_boundary` sẽ giảm.
 
 Ưu tiên v1 nên sửa ranh giới hỏi lại và xác nhận trong `artifacts/system_prompt.md`. Quy ước argument chi tiết của `lookup` có thể tách thành một hypothesis khác cho v2 để mỗi version chỉ kiểm chứng một thay đổi chính.
+
+## v1 — Cải thiện ranh giới hỏi lại và xác nhận
+
+### Thông tin run
+
+- Run file: `runs/v1_B_base_openrouter_20260729T155606736900.json`
+- Artifact version: `v1+p5ae268b8b686+t6cdb53d5d7b8`
+- Tổng số case: 20
+- Số case được đo: 20
+- Provider error: 0
+- Số case PASS: 18
+- Số case FAIL: 2
+
+Run hợp lệ vì toàn bộ 20 case đều được đo và không có lỗi provider. `prompt_hash` đã thay đổi so với v0, trong khi `tools_hash` giữ nguyên, xác nhận v1 chỉ thay đổi system prompt/tool-routing instruction chứ không thay declaration của tool.
+
+### Metrics và so sánh v0 → v1
+
+| Metric | v0 | v1 | Thay đổi |
+|---|---:|---:|---:|
+| Case accuracy | 0.65 | 0.90 | +0.25 |
+| Tool routing accuracy | 0.75 | 0.95 | +0.20 |
+| Argument accuracy | 0.65 | 0.90 | +0.25 |
+| Multiturn accuracy | 1.00 | 0.8333 | -0.1667 |
+| Số case PASS | 13/20 | 18/20 | +5 case |
+
+Kết quả cho thấy hypothesis v1 có hiệu quả rõ rệt trên độ chính xác tổng thể, routing và argument. Tuy nhiên, multiturn accuracy giảm do lỗi chuyển tool ở case `M06_switch_tool`.
+
+### Failure counts
+
+| Failure type | Số case |
+|---|---:|
+| `wrong_boundary` | 1 |
+| `wrong_tool` | 1 |
+
+### Observed mismatches
+
+| Mismatch thực tế | Số case |
+|---|---:|
+| `wrong_arg_value` | 1 |
+| `missing_tool_call` | 1 |
+
+## Phân tích 2 case thất bại của v1
+
+### R12_confirm_before_send
+
+- Failure type: `wrong_boundary`
+- Mismatch: `wrong_arg_value`
+- Tool kỳ vọng: `clarify(response_type="yes_no")`.
+- Tool thực tế: `clarify(response_type="text")`.
+- Câu hỏi thực tế của agent yêu cầu người dùng cung cấp nội dung bản tin, thay vì xin xác nhận có/không trước khi đăng.
+- Nhận xét: v1 đã cải thiện so với v0 vì không còn gọi `send` ngay, nhưng vẫn hiểu sai confirmation boundary và kiểu phản hồi bắt buộc.
+
+### M06_switch_tool
+
+- Failure type: `wrong_tool`
+- Mismatch: `missing_tool_call`
+- Tool kỳ vọng: `lookup(query="OpenAI", topic="news")`.
+- Tool thực tế: `social_search(query="OpenAI", search_type="Latest", limit=5)`.
+- Nhận xét: agent bị neo vào ngữ cảnh/tool của lượt trước và không chuyển sang web news khi yêu cầu mới thay đổi nguồn tìm kiếm.
+
+## Kết luận và đề xuất cho v2
+
+V1 tăng case accuracy từ 65% lên 90% và giảm số case fail từ 7 xuống 2. Các lỗi tự đoán handle/URL và sử dụng `send` cho câu trả lời thông thường đã được khắc phục trong run này.
+
+Hypothesis đề xuất cho v2:
+
+> Nếu mô tả routing quy định rõ yêu cầu “web/news” phải dùng `lookup`, yêu cầu mạng xã hội mới dùng `social_search`, và lượt mới nhất luôn được ưu tiên khi người dùng đổi nguồn tìm kiếm, thì lỗi multi-turn `M06_switch_tool` sẽ được khắc phục.
+
+Ngoài ra, cần quy định cụ thể rằng trước hành động `send`, agent phải dùng `clarify` với `response_type="yes_no"` để xin xác nhận; không dùng `response_type="text"` cho bước xác nhận.
