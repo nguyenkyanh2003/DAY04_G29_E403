@@ -1,0 +1,6 @@
+--- Kết quả nghiên cứu AI ---
+OpenAI và Google đang tiếp tục phát triển các mô hình đa phương thức.
+
+--- AI Agent Evaluation ---
+Cần đánh giá routing, arguments, tool execution và confirmation boundary bằng run JSON thật.
+

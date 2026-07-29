@@ -1,0 +1,141 @@
+{
+  "transcript_id": "v0_openrouter_20260729T171139626689",
+  "version": "v0",
+  "artifact_version": "v0+p5ae268b8b686+t67f516eca1ca",
+  "prompt_hash": "5ae268b8b68628f1d420454c6171325181f1bf7972f6609de5b3c65881de2ea3",
+  "tools_hash": "67f516eca1caf1464b0b35c1aefe6939584f91eec4021e795e693ed29626121f",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "F:\\AITHUCCHIEN\\LABS\\DAY04_G29_E403\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "F:\\AITHUCCHIEN\\LABS\\DAY04_G29_E403\\starter_v0\\artifacts\\tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-07-29T17:11:39",
+  "updated_at": "2026-07-29T17:12:33",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-07-29T17:12:15",
+      "user": "liệt kê 5 bài mới nhất trên twitetr",
+      "status": "answered",
+      "assistant_text": "Bạn có thể cho tôi biết tài khoản Twitter mà bạn muốn xem 5 bài mới nhất không?",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": "Bạn có thể cho tôi biết tài khoản Twitter mà bạn muốn xem 5 bài mới nhất không?",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [],
+      "ended_at": "2026-07-29T17:12:16"
+    },
+    {
+      "turn_index": 2,
+      "started_at": "2026-07-29T17:12:25",
+      "user": "cr7",
+      "status": "answered",
+      "assistant_text": "Dưới đây là 5 bài đăng mới nhất từ tài khoản Twitter của CR7:\n\n1. **te quiero??**\n   - Ngày đăng: Mon Sep 24 19:50:10 +0000 2007\n   - [Xem bài đăng](https://x.com/cr7/status/290665342)\n   - Thích: 64, Retweet: 27\n\n2. **recuperando poco a poco la ilusiOn???**\n   - Ngày đăng: Mon Sep 24 19:44:50 +0000 2007\n   - [Xem bài đăng](https://x.com/cr7/status/290655692)\n   - Thích: 20, Retweet: 5\n\nHiện tại chỉ có 2 bài đăng mới nhất từ tài khoản này. Nếu bạn cần thêm thông tin, hãy cho tôi biết!",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "timeline",
+              "args": {
+                "screenname": "cr7",
+                "limit": 5
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "timeline",
+              "args": {
+                "screenname": "cr7",
+                "limit": 5
+              },
+              "result": {
+                "tool": "get_user_tweets",
+                "screenname": "cr7",
+                "items": [
+                  {
+                    "title": "te quiero??",
+                    "summary": "te quiero??",
+                    "url": "https://x.com/cr7/status/290665342",
+                    "source": "@cr7",
+                    "date": "Mon Sep 24 19:50:10 +0000 2007",
+                    "metrics": {
+                      "favorites": 64,
+                      "retweets": 27,
+                      "views": null
+                    }
+                  },
+                  {
+                    "title": "recuperando poco a poco la ilusiOn???",
+                    "summary": "recuperando poco a poco la ilusiOn???",
+                    "url": "https://x.com/cr7/status/290655692",
+                    "source": "@cr7",
+                    "date": "Mon Sep 24 19:44:50 +0000 2007",
+                    "metrics": {
+                      "favorites": 20,
+                      "retweets": 5,
+                      "views": null
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "assistant_text": "Dưới đây là 5 bài đăng mới nhất từ tài khoản Twitter của CR7:\n\n1. **te quiero??**\n   - Ngày đăng: Mon Sep 24 19:50:10 +0000 2007\n   - [Xem bài đăng](https://x.com/cr7/status/290665342)\n   - Thích: 64, Retweet: 27\n\n2. **recuperando poco a poco la ilusiOn???**\n   - Ngày đăng: Mon Sep 24 19:44:50 +0000 2007\n   - [Xem bài đăng](https://x.com/cr7/status/290655692)\n   - Thích: 20, Retweet: 5\n\nHiện tại chỉ có 2 bài đăng mới nhất từ tài khoản này. Nếu bạn cần thêm thông tin, hãy cho tôi biết!",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "cr7",
+            "limit": 5
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "screenname": "cr7",
+            "items": [
+              {
+                "title": "te quiero??",
+                "summary": "te quiero??",
+                "url": "https://x.com/cr7/status/290665342",
+                "source": "@cr7",
+                "date": "Mon Sep 24 19:50:10 +0000 2007",
+                "metrics": {
+                  "favorites": 64,
+                  "retweets": 27,
+                  "views": null
+                }
+              },
+              {
+                "title": "recuperando poco a poco la ilusiOn???",
+                "summary": "recuperando poco a poco la ilusiOn???",
+                "url": "https://x.com/cr7/status/290655692",
+                "source": "@cr7",
+                "date": "Mon Sep 24 19:44:50 +0000 2007",
+                "metrics": {
+                  "favorites": 20,
+                  "retweets": 5,
+                  "views": null
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "ended_at": "2026-07-29T17:12:33"
+    }
+  ]
+}

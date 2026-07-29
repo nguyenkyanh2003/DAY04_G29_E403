@@ -115,10 +115,14 @@ def render_trace(turn: dict[str, Any]) -> None:
         calls = round_record.get("tool_calls") or []
         results = round_record.get("tool_results") or []
         status = "completed" if calls else "answered"
-        st.markdown(f"**Round {round_number} · {status}**")
+        st.markdown(f"### Round {round_number}")
+        st.caption(f"Trạng thái: {status}")
 
-        if round_record.get("assistant_text"):
-            st.caption(round_record["assistant_text"])
+        assistant_text = round_record.get("assistant_text")
+        if assistant_text:
+            with st.container(border=True):
+                st.markdown("#### Phản hồi của model")
+                st.markdown(redact_secrets(assistant_text))
 
         if not calls:
             st.caption("Model trả lời trực tiếp, không gọi tool.")

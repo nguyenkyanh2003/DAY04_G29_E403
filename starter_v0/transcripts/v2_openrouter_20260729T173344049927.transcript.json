@@ -1,0 +1,45 @@
+{
+  "transcript_id": "v2_openrouter_20260729T173344049927",
+  "version": "v2",
+  "artifact_version": "v2+p5ae268b8b686+t67f516eca1ca",
+  "prompt_hash": "5ae268b8b68628f1d420454c6171325181f1bf7972f6609de5b3c65881de2ea3",
+  "tools_hash": "67f516eca1caf1464b0b35c1aefe6939584f91eec4021e795e693ed29626121f",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "F:\\AITHUCCHIEN\\LABS\\DAY04_G29_E403\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "F:\\AITHUCCHIEN\\LABS\\DAY04_G29_E403\\starter_v0\\artifacts\\tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-07-29T17:33:44",
+  "updated_at": "2026-07-29T17:36:24",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-07-29T17:34:57",
+      "user": "5 siêu mẫu nổi tiếng",
+      "status": "answered",
+      "assistant_text": "Dưới đây là danh sách 5 siêu mẫu nổi tiếng:\n\n1. **Gigi Hadid** - Một trong những siêu mẫu hàng đầu thế giới, Gigi đã làm việc với nhiều thương hiệu lớn và xuất hiện trên nhiều bìa tạp chí thời trang.\n\n2. **Kendall Jenner** - Nổi tiếng không chỉ vì là một siêu mẫu mà còn là một thành viên của gia đình Kardashian-Jenner, Kendall đã trở thành gương mặt đại diện cho nhiều thương hiệu lớn.\n\n3. **Cara Delevingne** - Với phong cách độc đáo và cá tính mạnh mẽ, Cara đã trở thành một trong những siêu mẫu được yêu thích nhất và cũng là một diễn viên thành công.\n\n4. **Adriana Lima** - Siêu mẫu người Brazil, nổi tiếng với vai trò là thiên thần của Victoria's Secret trong nhiều năm, Adriana đã có một sự nghiệp dài và thành công trong ngành công nghiệp thời trang.\n\n5. **Naomi Campbell** - Một trong những siêu mẫu đầu tiên và có ảnh hưởng nhất trong lịch sử thời trang, Naomi đã làm việc với nhiều nhà thiết kế nổi tiếng và vẫn tiếp tục hoạt động trong ngành.\n\nNếu bạn cần thêm thông tin về bất kỳ siêu mẫu nào trong danh sách này, hãy cho tôi biết!",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": "Dưới đây là danh sách 5 siêu mẫu nổi tiếng:\n\n1. **Gigi Hadid** - Một trong những siêu mẫu hàng đầu thế giới, Gigi đã làm việc với nhiều thương hiệu lớn và xuất hiện trên nhiều bìa tạp chí thời trang.\n\n2. **Kendall Jenner** - Nổi tiếng không chỉ vì là một siêu mẫu mà còn là một thành viên của gia đình Kardashian-Jenner, Kendall đã trở thành gương mặt đại diện cho nhiều thương hiệu lớn.\n\n3. **Cara Delevingne** - Với phong cách độc đáo và cá tính mạnh mẽ, Cara đã trở thành một trong những siêu mẫu được yêu thích nhất và cũng là một diễn viên thành công.\n\n4. **Adriana Lima** - Siêu mẫu người Brazil, nổi tiếng với vai trò là thiên thần của Victoria's Secret trong nhiều năm, Adriana đã có một sự nghiệp dài và thành công trong ngành công nghiệp thời trang.\n\n5. **Naomi Campbell** - Một trong những siêu mẫu đầu tiên và có ảnh hưởng nhất trong lịch sử thời trang, Naomi đã làm việc với nhiều nhà thiết kế nổi tiếng và vẫn tiếp tục hoạt động trong ngành.\n\nNếu bạn cần thêm thông tin về bất kỳ siêu mẫu nào trong danh sách này, hãy cho tôi biết!",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [],
+      "ended_at": "2026-07-29T17:35:08"
+    },
+    {
+      "turn_index": 2,
+      "started_at": "2026-07-29T17:36:23",
+      "user": "5 siêu mẫu trên tweet",
+      "status": "provider_error",
+      "assistant_text": null,
+      "rounds": [],
+      "tool_events": [],
+      "error": "APIStatusError: Error code: 402 - {'error': {'message': 'This request requires more credits, or fewer max_tokens. You requested up to 16384 tokens, but can only afford 16323. To increase, visit https://openrouter.ai/settings/credits and upgrade to a paid account', 'code': 402, 'metadata': {'limit_source': 'openrouter_credits', 'remedy_hint': 'Add credits at https://openrouter.ai/settings/credits, or lower max_tokens / prompt size to fit your remaining balance.', 'provider_name': None}}, 'user_id': 'user_3DbegrWXiJobsmp6ZLLA1aoBtac'}",
+      "ended_at": "2026-07-29T17:36:24"
+    }
+  ]
+}
