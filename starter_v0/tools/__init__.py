@@ -18,6 +18,9 @@ from .social_search.tool import search_tweets
 from .send.tool import send_telegram
 from .lookup.tool import web_search
 from .save_note.tool import save_note
+from .deduplicate_sources.tool import deduplicate_sources
+from .rank_sources.tool import rank_sources
+from .compare_sources.tool import compare_sources
 
 
 # NOTE (starter_v0): tool names here are intentionally vague. These keys are the
@@ -37,6 +40,9 @@ TOOL_FUNCTIONS = {
     "papers": arxiv_search,
     "paper_text": get_arxiv_paper_text,
     "save_note": save_note,
+    "deduplicate_sources": deduplicate_sources,
+    "rank_sources": rank_sources,
+    "compare_sources": compare_sources,
 }
 
 
